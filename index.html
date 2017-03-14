@@ -47,7 +47,7 @@
 
 			//audio var
 			var myAudio = document.createElement('audio');
-			myAudio.src = 'shoot.wav';
+			myAudio.src = 'song/shoot.wav';
 
 			//bricks var
 			var brickWidth = 75;
@@ -129,7 +129,8 @@
 					myAudio.play();
 					dy = -dy;
 				}else if(y > canvas.height - ballHeight - paddleHeight - 0.3){
-					if(x > paddleX && x < paddleX + paddleWidth/3){
+					if(x > paddleX && x < paddleX + (paddleWidth/3) ){
+						console.log("esq");
 						if(dy < 0)
 							dy = -1;
 						else
@@ -141,7 +142,8 @@
 						dy = -dy;
 						myAudio.currentTime = 0;
 						myAudio.play();
-					}else if(x > (paddleWidth-(paddleX/3)) && x < paddleX + paddleWidth){
+					}else if(x > ((paddleX+paddleWidth)-(paddleWidth/3)) && x < paddleX + paddleWidth){
+						console.log("dir");
 						if(dy < 0)
 							dy = -1;
 						else
@@ -153,7 +155,8 @@
 						dy = -dy;
 						myAudio.currentTime = 0;
 						myAudio.play();
-					}else if(x > (paddleX/3) && x < paddleX + (paddleWidth-(paddleX/3)) ){
+					}else if(x > paddleX+(paddleWidth/3) && x < paddleX + (paddleX-(paddleWidth/3)) ){
+						console.log("mid");
 						if(dy < 0)
 							dy = -1;
 						else
