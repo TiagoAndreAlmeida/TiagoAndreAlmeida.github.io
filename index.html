@@ -9,7 +9,7 @@
 				margin: 0;
 			}
 			canvas {
-				background: #000000;
+				background: #000;
 				display: block;
 				margin: 0 auto;
 			}
@@ -29,16 +29,25 @@
 			var y = canvas.height-30;
 			var dx = 2;
 			var dy = -2;
-			var ballRadius = 10;
+			var ballWidth = 17;
+			var ballHeight = 16;
+			var ball_sprite = new Image();
+			ball_sprite.src = 'sprites/ball.png';
 
 			//paddle var
 			var paddleWidth = 70;
 			var paddleHeight = 10;
 			var paddleX = (canvas.width - paddleWidth)/2;
+			var paddle_sprite = new Image();
+			paddle_sprite.src = 'sprites/paddle.png';
 
 			//controller var
 			var rightPressed = false;
 			var leftPressed = false;
+
+			//audio var
+			var myAudio = document.createElement('audio');
+			myAudio.src = 'shoot.wav';
 
 			//bricks var
 			var brickWidth = 75;
@@ -48,6 +57,8 @@
 			var brickPadding = 10;
 			var brickOffsetTop = 30;
 			var brickOffsetLeft = 30;
+			var brick_sprite = new Image();
+			brick_sprite.src = 'sprites/brick.png';
 
 			//bricks settin up
 			var bricks = [];
@@ -86,6 +97,8 @@
 						if(b.status == 1){
 							if((x > b.x && x < b.x+brickWidth && y > b.y && y < b.y+brickHeight)){
 								dy = -dy;
+								myAudio.currentTime = 0;
+								myAudio.play();
 								b.status = 0;
 								score++;
 								if(score == brickRowCount * brickColumnCount){
@@ -104,25 +117,63 @@
 				drawBall();
 				drawPaddle();
 				drawBricks();
-				collisionDetection();
+				collisionDetection()
 				drawScore();
 				if(rightPressed && paddleX < canvas.width - paddleWidth){
 					paddleX += 7;
 				}else if(leftPressed && paddleX > 0){
 					paddleX -= 7;
 				}
-				if(y < ballRadius){
+				if(y < ballHeight){
+					myAudio.currentTime = 0;
+					myAudio.play();
 					dy = -dy;
-				}else if(y > canvas.height - ballRadius - paddleHeight - 0.3){
-					if(x > paddleX && x < paddleX + paddleWidth){
+				}else if(y > canvas.height - ballHeight - paddleHeight - 0.3){
+					if(x > paddleX && x < paddleX + paddleWidth/3){
+						if(dy < 0)
+							dy = -1;
+						else
+							dy = 1;
+						if(dx < 0)
+							dx = -4;
+						else
+							dx = 4;
 						dy = -dy;
+						myAudio.currentTime = 0;
+						myAudio.play();
+					}else if(x > (paddleWidth-(paddleX/3)) && x < paddleX + paddleWidth){
+						if(dy < 0)
+							dy = -1;
+						else
+							dy = 1;
+						if(dx < 0)
+							dx = -3;
+						else
+							dx = 3;
+						dy = -dy;
+						myAudio.currentTime = 0;
+						myAudio.play();
+					}else if(x > (paddleX/3) && x < paddleX + (paddleWidth-(paddleX/3)) ){
+						if(dy < 0)
+							dy = -1;
+						else
+							dy = 1;
+						if(dx < 0)
+							dx = -3;
+						else
+							dx = 3;
+						dy = -dy;
+						myAudio.currentTime = 0;
+						myAudio.play();
 					}
 				}
-				if(y > canvas.height - ballRadius){
+				if(y > canvas.height - ballHeight){
 					alert('GAME OVER');
 					document.location.reload();	
 				}
-				if(x > canvas.width - ballRadius || x < ballRadius){
+				if(x > canvas.width - ballWidth || x < 0){
+					myAudio.currentTime = 0;
+					myAudio.play();
 					dx = -dx;
 				}
 				x += dx;
@@ -133,20 +184,26 @@
 
 			//draw the ball
 			function drawBall () {
+				/*
 				ctx.beginPath();
 				ctx.arc(x,y, ballRadius, 0, Math.PI*2);
-				ctx.fillStyle = '#FFFFFF';
+				ctx.fillStyle = '#0095DD';
 				ctx.fill();
 				ctx.closePath();
+				*/
+				ctx.drawImage(ball_sprite, x, y, ballWidth, ballHeight);
 			}
 
 			//draw the paddle
 			function drawPaddle (){
+				/*
 				ctx.beginPath();
 				ctx.rect(paddleX, canvas.height-paddleHeight, paddleWidth, paddleHeight);
-				ctx.fillStyle = '#FFFFFF';
+				ctx.fillStyle = '#0095DD';
 				ctx.fill();
 				ctx.closePath();
+				*/
+				ctx.drawImage(paddle_sprite, paddleX, canvas.height-paddleHeight, paddleWidth, paddleHeight);
 			}
 
 			//draw the bricks in arrow
@@ -158,11 +215,14 @@
 							var brickY = (r*(brickHeight+brickPadding))+brickOffsetTop;
 							bricks[c][r].x = brickX;
 							bricks[c][r].y = brickY;
+							/*
 							ctx.beginPath();
 				            ctx.rect(bricks[c][r].x, bricks[c][r].y, brickWidth, brickHeight);
-				            ctx.fillStyle = "#FFFFFF";
+				            ctx.fillStyle = "#0095DD";
 				            ctx.fill();
 				            ctx.closePath();
+				            */
+				            ctx.drawImage(brick_sprite, bricks[c][r].x, bricks[c][r].y, brickWidth, brickHeight);
 			        	}
 					}
 				}
@@ -171,7 +231,7 @@
 			//draw the score
 			function drawScore (){
 				ctx.font = '16px Arial';
-				ctx.fillStyle = '#FFFFFF';
+				ctx.fillStyle = '#fff';
 				ctx.fillText("Score: "+score, 8, 20);
 			}
 
