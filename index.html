@@ -9,7 +9,7 @@
 				margin: 0;
 			}
 			canvas {
-				background: #eee;
+				background: #000000;
 				display: block;
 				margin: 0 auto;
 			}
@@ -104,7 +104,7 @@
 				drawBall();
 				drawPaddle();
 				drawBricks();
-				collisionDetection()
+				collisionDetection();
 				drawScore();
 				if(rightPressed && paddleX < canvas.width - paddleWidth){
 					paddleX += 7;
@@ -135,7 +135,7 @@
 			function drawBall () {
 				ctx.beginPath();
 				ctx.arc(x,y, ballRadius, 0, Math.PI*2);
-				ctx.fillStyle = '#0095DD';
+				ctx.fillStyle = '#FFFFFF';
 				ctx.fill();
 				ctx.closePath();
 			}
@@ -144,7 +144,7 @@
 			function drawPaddle (){
 				ctx.beginPath();
 				ctx.rect(paddleX, canvas.height-paddleHeight, paddleWidth, paddleHeight);
-				ctx.fillStyle = '#0095DD';
+				ctx.fillStyle = '#FFFFFF';
 				ctx.fill();
 				ctx.closePath();
 			}
@@ -160,7 +160,7 @@
 							bricks[c][r].y = brickY;
 							ctx.beginPath();
 				            ctx.rect(bricks[c][r].x, bricks[c][r].y, brickWidth, brickHeight);
-				            ctx.fillStyle = "#0095DD";
+				            ctx.fillStyle = "#FFFFFF";
 				            ctx.fill();
 				            ctx.closePath();
 			        	}
@@ -171,7 +171,7 @@
 			//draw the score
 			function drawScore (){
 				ctx.font = '16px Arial';
-				ctx.fillStyle = '#0095DD';
+				ctx.fillStyle = '#FFFFFF';
 				ctx.fillText("Score: "+score, 8, 20);
 			}
 
