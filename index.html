@@ -1,8 +1,183 @@
+<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-  </head>
-  <body>
-    <h1 style="text-color:red">Olá mundo!</h1>
-  </body>
+	<head>
+		<meta charset='utf-8'/>
+		<title>BREAKOUT</title>
+		<style type="text/css">
+			* {
+				padding: 0;
+				margin: 0;
+			}
+			canvas {
+				background: #eee;
+				display: block;
+				margin: 0 auto;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id='cv' width='480' height='320'></canvas>
+		<script type="text/javascript">
+			var canvas = document.getElementById('cv');
+			var ctx = canvas.getContext('2d');
+
+			//var score
+			var score = 0;
+
+			//ball var
+			var x = canvas.width/2;
+			var y = canvas.height-30;
+			var dx = 2;
+			var dy = -2;
+			var ballRadius = 10;
+
+			//paddle var
+			var paddleWidth = 70;
+			var paddleHeight = 10;
+			var paddleX = (canvas.width - paddleWidth)/2;
+
+			//controller var
+			var rightPressed = false;
+			var leftPressed = false;
+
+			//bricks var
+			var brickWidth = 75;
+			var brickHeight = 20;
+			var brickRowCount = 3;
+			var brickColumnCount = 5;
+			var brickPadding = 10;
+			var brickOffsetTop = 30;
+			var brickOffsetLeft = 30;
+
+			//bricks settin up
+			var bricks = [];
+			for(c=0; c<brickColumnCount; c++){
+				bricks[c] = [];
+				for(r=0; r<brickRowCount; r++){
+					bricks[c][r] = {
+						x:0, y:0, status:1
+					};
+				}
+			}
+
+			//events
+			document.addEventListener('keydown', KeyDownHandler, false);
+			document.addEventListener('keyup', KeyUpHandler, false);
+
+			function KeyDownHandler(e){
+				if(e.keyCode == 39){
+					rightPressed = true;
+				}else if(e.keyCode == 37){
+					leftPressed = true;
+				}
+			}
+			function KeyUpHandler(e){
+				if(e.keyCode == 39){
+					rightPressed = false;
+				}else if(e.keyCode == 37){
+					leftPressed = false;
+				}
+			}
+
+			function collisionDetection(){
+				for(c=0; c<brickColumnCount; c++){
+					for(r=0; r<brickRowCount; r++){
+						var b = bricks[c][r];
+						if(b.status == 1){
+							if((x > b.x && x < b.x+brickWidth && y > b.y && y < b.y+brickHeight)){
+								dy = -dy;
+								b.status = 0;
+								score++;
+								if(score == brickRowCount * brickColumnCount){
+									alert('VOCÊ VENCEU!');
+									document.location.reload();
+								}
+							}
+						}
+					}
+				}
+			}
+
+			//loop game
+			function draw(){
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				drawBall();
+				drawPaddle();
+				drawBricks();
+				collisionDetection()
+				drawScore();
+				if(rightPressed && paddleX < canvas.width - paddleWidth){
+					paddleX += 7;
+				}else if(leftPressed && paddleX > 0){
+					paddleX -= 7;
+				}
+				if(y < ballRadius){
+					dy = -dy;
+				}else if(y > canvas.height - ballRadius - paddleHeight - 0.3){
+					if(x > paddleX && x < paddleX + paddleWidth){
+						dy = -dy;
+					}
+				}
+				if(y > canvas.height - ballRadius){
+					alert('GAME OVER');
+					document.location.reload();	
+				}
+				if(x > canvas.width - ballRadius || x < ballRadius){
+					dx = -dx;
+				}
+				x += dx;
+				y += dy;
+
+				requestAnimationFrame(draw);
+			}
+
+			//draw the ball
+			function drawBall () {
+				ctx.beginPath();
+				ctx.arc(x,y, ballRadius, 0, Math.PI*2);
+				ctx.fillStyle = '#0095DD';
+				ctx.fill();
+				ctx.closePath();
+			}
+
+			//draw the paddle
+			function drawPaddle (){
+				ctx.beginPath();
+				ctx.rect(paddleX, canvas.height-paddleHeight, paddleWidth, paddleHeight);
+				ctx.fillStyle = '#0095DD';
+				ctx.fill();
+				ctx.closePath();
+			}
+
+			//draw the bricks in arrow
+			function drawBricks(){
+				for(c=0; c<brickColumnCount; c++){
+					for(r=0; r<brickRowCount; r++){
+						if(bricks[c][r].status == 1){
+							var brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
+							var brickY = (r*(brickHeight+brickPadding))+brickOffsetTop;
+							bricks[c][r].x = brickX;
+							bricks[c][r].y = brickY;
+							ctx.beginPath();
+				            ctx.rect(bricks[c][r].x, bricks[c][r].y, brickWidth, brickHeight);
+				            ctx.fillStyle = "#0095DD";
+				            ctx.fill();
+				            ctx.closePath();
+			        	}
+					}
+				}
+			}
+
+			//draw the score
+			function drawScore (){
+				ctx.font = '16px Arial';
+				ctx.fillStyle = '#0095DD';
+				ctx.fillText("Score: "+score, 8, 20);
+			}
+
+			draw();
+			//call the draw function to make a loopgame
+			//setInterval(draw, 10);
+		</script>
+	</body>
 </html>
