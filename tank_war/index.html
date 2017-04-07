@@ -7,22 +7,29 @@
 		<style type="text/css">
 			#canvas{
 				background: black;
+				position: absolute;
+				top: 0; bottom: 0;
+				left: 0;
+				right: 0;
+				margin: auto;
 			}
 		</style>
 	</head>
 	<body>
-		<canvas id='canvas'></canvas>
+		<canvas id='canvas' width='800' height='480'></canvas>
 		<script type="text/javascript">
 			var canvas = document.getElementById('canvas');
 			var ctx = canvas.getContext('2d');
 
 			var player = new Tank(1, canvas.height /2);
 			var shoots_prefab = [];
-			//var shoot = new Shoot(0,0);
+			var enemy_prefab = [];
+			var last_spawn = 0;
 
 			var up = false;
 			var down = false;
 			var space = false;
+			var last_shoot = 0;
 
 			document.addEventListener('keydown', keydown, false);
 			document.addEventListener('keyup', keyup, false);
@@ -33,8 +40,10 @@
 				}else if(e.keyCode == 40){
 					down = true;
 				}
-				if(e.keyCode == 32)
+				if(e.keyCode == 32){
 					space = true;
+					time_shoot = new Date().getTime();
+				}
 			}
 
 			function keyup (e){
@@ -43,43 +52,80 @@
 				}else if(e.keyCode == 40){
 					down = false;
 				}
-				if(e.keyCode == 32)
+				if(e.keyCode == 32){
 					space = false;
+				}
 			}
 
 			function update (){
 				ctx.clearRect(0,0,canvas.width,canvas.height);
+				var currentTime = new Date().getTime();
 
-				if(space){
-					aux = new Shoot(player.x+player.width, player.y);
-					shoots_prefab.push(aux);
+				for(i in shoots_prefab){
+					//set shoots_prefab reference to variable "s" so this way we can acesses his propriety
+					s = shoots_prefab[i];
+					for(j in enemy_prefab){
+						//set enemy_prefab reference to variable "e" so this way we can acesses his propriety
+						e = enemy_prefab[j];
+						if((s.x > e.x) && s.x < (e.x + e.width) && (s.y > e.y) && s.y < (e.y + e.height)){
+							shoots_prefab.splice(i, 1);
+							enemy_prefab.splice(j, 1);
+						}
+					}
 				}
 
+				if(space && (new Date().getTime() - last_shoot) > 750){
+					aux = new Shoot(player.x+player.width, player.y);
+					shoots_prefab.push(aux);
+					last_shoot = new Date().getTime();
+				}
+				//draw shoot´s
 				for(s in shoots_prefab){
 					ctx.beginPath();
 					ctx.rect(shoots_prefab[s].x, shoots_prefab[s].y, shoots_prefab[s].width, shoots_prefab[s].height);
-					ctx.fillStyle = '#ABD435'
+					ctx.fillStyle = '#ABD435';
 					ctx.fill();
 					ctx.closePath();
 					shoots_prefab[s].move();
 					if(shoots_prefab[s].x > canvas.width){
 						shoots_prefab.splice(s, 1);
 					}
+
 				}
-				
+
+				for(e in enemy_prefab){
+					ctx.beginPath();
+					ctx.rect(enemy_prefab[e].x, enemy_prefab[e].y, enemy_prefab[e].width, enemy_prefab[e].height);
+					ctx.fillStyle = '#fff';
+					ctx.fill();
+					ctx.closePath();
+					enemy_prefab[e].move();
+					if(enemy_prefab[e].x < 0)
+						enemy_prefab.splice(e,1);
+				}
+
 				ctx.beginPath();
 				ctx.rect(player.x, player.y, player.width, player.height);
-				ctx.fillStyle = '#ABD435'
+				ctx.fillStyle = '#ABD435';
 				ctx.fill();
 				ctx.closePath();
-				if(up || down)
+				if(up || down) {
 					player.move(up, down);
+				}
+				//Time to spawn a new enemy
+				if(currentTime - last_spawn > 1000)
+					spawn_enemy(canvas.width, Math.random()*canvas.height);
 
 				requestAnimationFrame(update);
 			}
-			
+
+			function spawn_enemy (x, y){
+				aux = new Enemy(x,y);
+				enemy_prefab.push( aux );
+				last_spawn = new Date().getTime();
+			}
+
 			update();
-			//setInterval(update, 10);
 		</script>
 	</body>
 </html>
