@@ -2,7 +2,7 @@
 var Shoot = function (x, y){
 	this.x = x;
 	this.y = y;
-	this.speed = 25;
+	this.speed = 15;
 	this.width = 20;
 	this.height = 5;
 };
