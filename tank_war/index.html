@@ -80,7 +80,7 @@
 
 						//check if the player can shoot
 						if(space && (new Date().getTime() - last_shoot) > 750){
-							aux = new Shoot(player.x+player.width, player.y);
+							aux = new Shoot( player.x+player.width, player.y + (player.width/4) );
 							shoots_prefab.push(aux);
 							shoot_fx.currentTime = 0;
 							shoot_fx.play();
@@ -116,7 +116,11 @@
 						ctx.fill();
 						ctx.closePath();
 						if(up || down) {
-							player.move(up, down);
+							if((player.y >= 0) && (player.y <= canvas.height - player.height)){
+								player.move(up, down);
+							}
+							if(player.y < 0) player.y = 0;
+							if(player.y > canvas.height - player.height) player.y = canvas.height - player.height;
 						}
 						//Time to spawn a new enemy
 						if(currentTime - last_spawn > 1500)
