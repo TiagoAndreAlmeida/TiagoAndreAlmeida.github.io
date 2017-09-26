@@ -29,7 +29,7 @@
 			var hit_base_fx = document.createElement('audio');
 			hit_base_fx.src = 'fx/hit_base.wav';
 
-			var player = new Tank(1, canvas.height /2);
+			var player = new Tank(1, canvas.height /2, 'sprites/player.png');
 			var points = 0;
 			var life = 3;
 
@@ -80,7 +80,7 @@
 
 						//check if the player can shoot
 						if(space && (new Date().getTime() - last_shoot) > 750){
-							aux = new Shoot( player.x+player.width, player.y + (player.width/4) );
+							aux = new Shoot( player.x+player.width, player.y + (player.width/4), 'sprites/bullet.png' );
 							shoots_prefab.push(aux);
 							shoot_fx.currentTime = 0;
 							shoot_fx.play();
@@ -109,12 +109,15 @@
 								}
 							}
 						}
-
-						ctx.beginPath();
+						//draw player BEING
+						/*ctx.beginPath();
 						ctx.rect(player.x, player.y, player.width, player.height);
 						ctx.fillStyle = '#ABD435';
 						ctx.fill();
-						ctx.closePath();
+						ctx.closePath();*/
+						ctx.drawImage(player.sprite, player.x, player.y, player.width, player.height);
+						//draw player END
+
 						if(up || down) {
 							if((player.y >= 0) && (player.y <= canvas.height - player.height)){
 								player.move(up, down);
@@ -146,7 +149,7 @@
 			}
 
 			function spawn_enemy (x, y){
-				aux = new Enemy(x,y);
+				aux = new Enemy(x,y, 'sprites/enemy.png');
 				enemy_prefab.push( aux );
 				last_spawn = new Date().getTime();
 			}
@@ -173,11 +176,12 @@
 
 			function draw_enemy(){
 				for(e in enemy_prefab){
-					ctx.beginPath();
+					/*ctx.beginPath();
 					ctx.rect(enemy_prefab[e].x, enemy_prefab[e].y, enemy_prefab[e].width, enemy_prefab[e].height);
 					ctx.fillStyle = '#fff';
 					ctx.fill();
-					ctx.closePath();
+					ctx.closePath();*/
+					ctx.drawImage(enemy_prefab[e].sprite, enemy_prefab[e].x, enemy_prefab[e].y, enemy_prefab[e].width, enemy_prefab[e].height);
 					enemy_prefab[e].move();
 					if(enemy_prefab[e].x < 0){
 						enemy_prefab.splice(e,1);
@@ -193,12 +197,15 @@
 			}
 
 			function draw_shoot(){
+				//var sprite = new Image();
+				//sprite.src = 'sprites/bullet.png';
 				for(s in shoots_prefab){
-					ctx.beginPath();
+					/*ctx.beginPath();
 					ctx.rect(shoots_prefab[s].x, shoots_prefab[s].y, shoots_prefab[s].width, shoots_prefab[s].height);
 					ctx.fillStyle = '#ABD435';
 					ctx.fill();
-					ctx.closePath();
+					ctx.closePath(); */
+					ctx.drawImage(shoots_prefab[s].sprite, shoots_prefab[s].x, shoots_prefab[s].y, shoots_prefab[s].width, shoots_prefab[s].height);
 					shoots_prefab[s].move();
 					if(shoots_prefab[s].x > canvas.width){
 						shoots_prefab.splice(s, 1);
